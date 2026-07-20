@@ -1,6 +1,24 @@
 import { defineManifest } from '@crxjs/vite-plugin';
 import pkg from './package.json';
 
+/** Match patterns for every supported job portal + ATS platform. */
+const PORTAL_MATCHES = [
+  'https://*.linkedin.com/*',
+  'https://*.indeed.com/*',
+  'https://*.naukri.com/*',
+  'https://*.glassdoor.com/*',
+  'https://*.monster.com/*',
+  'https://*.internshala.com/*',
+  'https://*.wellfound.com/*',
+  'https://*.ziprecruiter.com/*',
+  'https://*.dice.com/*',
+  'https://*.simplyhired.com/*',
+  'https://*.greenhouse.io/*',
+  'https://*.lever.co/*',
+  'https://*.myworkdayjobs.com/*',
+  'https://*.ashbyhq.com/*',
+];
+
 /**
  * Manifest V3 definition.
  *
@@ -38,28 +56,14 @@ export default defineManifest({
     'sidePanel',
   ],
   host_permissions: [
-    'https://*.linkedin.com/*',
-    'https://*.indeed.com/*',
-    'https://*.naukri.com/*',
-    'https://*.glassdoor.com/*',
-    'https://*.monster.com/*',
-    'https://*.internshala.com/*',
-    'https://*.wellfound.com/*',
+    ...PORTAL_MATCHES,
     // AI providers (used by the background worker for fetch calls)
     'https://api.openai.com/*',
     'https://api.anthropic.com/*',
   ],
   content_scripts: [
     {
-      matches: [
-        'https://*.linkedin.com/*',
-        'https://*.indeed.com/*',
-        'https://*.naukri.com/*',
-        'https://*.glassdoor.com/*',
-        'https://*.monster.com/*',
-        'https://*.internshala.com/*',
-        'https://*.wellfound.com/*',
-      ],
+      matches: PORTAL_MATCHES,
       js: ['src/content/index.ts'],
       run_at: 'document_idle',
     },

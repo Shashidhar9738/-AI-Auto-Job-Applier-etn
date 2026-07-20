@@ -97,6 +97,13 @@ export type PortalId =
   | 'monster'
   | 'internshala'
   | 'wellfound'
+  | 'ziprecruiter'
+  | 'dice'
+  | 'simplyhired'
+  | 'greenhouse'
+  | 'lever'
+  | 'workday'
+  | 'ashby'
   | 'generic';
 
 export type WorkMode = 'remote' | 'hybrid' | 'onsite' | 'any';

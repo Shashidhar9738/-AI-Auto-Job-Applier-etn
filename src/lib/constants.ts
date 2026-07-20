@@ -16,6 +16,13 @@ export const PORTAL_LABELS: Record<PortalId, string> = {
   monster: 'Monster',
   internshala: 'Internshala',
   wellfound: 'Wellfound',
+  ziprecruiter: 'ZipRecruiter',
+  dice: 'Dice',
+  simplyhired: 'SimplyHired',
+  greenhouse: 'Greenhouse',
+  lever: 'Lever',
+  workday: 'Workday',
+  ashby: 'Ashby',
   generic: 'Other',
 };
 

@@ -26,9 +26,15 @@ adapters.
 
 ## Supported portals
 
-Dedicated adapters: **LinkedIn** (Easy Apply), **Indeed**, **Naukri**.
-Generic-adapter fallback (heuristic form filling): **Glassdoor, Monster,
-Internshala, Wellfound**, and any ATS embed.
+**14 dedicated adapters:**
+
+- **Job boards:** LinkedIn (Easy Apply), Indeed, Naukri, Glassdoor, Monster,
+  Internshala, Wellfound, ZipRecruiter, Dice, SimplyHired
+- **ATS platforms** (cover thousands of company career pages): Greenhouse,
+  Lever, Workday, Ashby
+
+Any other site falls through to the **generic adapter**, which applies the same
+heuristic field detection and label-based button driving.
 
 ---
 

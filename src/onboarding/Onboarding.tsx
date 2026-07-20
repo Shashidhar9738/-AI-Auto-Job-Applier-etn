@@ -140,7 +140,7 @@ export function Onboarding() {
       {step === 4 && (
         <Panel title="You're all set 🎉" subtitle="Open a job posting on a supported portal, then click the extension icon.">
           <div className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
-            <p>Supported: LinkedIn, Indeed, Naukri, Glassdoor, Monster, Internshala, Wellfound.</p>
+            <p>Supported: LinkedIn, Indeed, Naukri, Glassdoor, Monster, Internshala, Wellfound, ZipRecruiter, Dice, SimplyHired — plus Greenhouse, Lever, Workday & Ashby career pages.</p>
             <p>Tip: start in <b>Semi-Auto</b> mode so you can review before each submit.</p>
           </div>
           <button className="btn-primary mt-5 w-full" onClick={() => window.close()}>Close</button>

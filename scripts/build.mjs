@@ -101,6 +101,13 @@ async function buildManifest() {
     'https://*.monster.com/*',
     'https://*.internshala.com/*',
     'https://*.wellfound.com/*',
+    'https://*.ziprecruiter.com/*',
+    'https://*.dice.com/*',
+    'https://*.simplyhired.com/*',
+    'https://*.greenhouse.io/*',
+    'https://*.lever.co/*',
+    'https://*.myworkdayjobs.com/*',
+    'https://*.ashbyhq.com/*',
   ];
   return {
     manifest_version: 3,
