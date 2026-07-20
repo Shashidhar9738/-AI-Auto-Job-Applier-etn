@@ -78,8 +78,10 @@ export const MODEL_OPTIONS: Record<string, { value: string; label: string }[]> =
     { value: 'deepseek/deepseek-chat', label: 'DeepSeek Chat' },
     { value: 'google/gemini-2.0-flash-001', label: 'Gemini 2.0 Flash' },
     { value: 'meta-llama/llama-3.3-70b-instruct', label: 'Llama 3.3 70B' },
+    // Free slugs rotate on OpenRouter; if one 404s, pick another or use "Other…".
     { value: 'deepseek/deepseek-r1:free', label: 'DeepSeek R1 — FREE' },
-    { value: 'google/gemini-2.0-flash-exp:free', label: 'Gemini 2.0 Flash — FREE' },
+    { value: 'deepseek/deepseek-chat-v3-0324:free', label: 'DeepSeek V3 — FREE' },
+    { value: 'meta-llama/llama-3.3-70b-instruct:free', label: 'Llama 3.3 70B — FREE' },
   ],
   // Custom is free-text (any slug); no curated list.
   custom: [],
