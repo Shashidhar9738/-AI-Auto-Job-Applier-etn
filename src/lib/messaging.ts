@@ -1,4 +1,5 @@
 import type {
+  AiSettings,
   ApplicationRecord,
   FormField,
   JobDetails,
@@ -23,6 +24,7 @@ export type BackgroundRequest =
   | { type: 'session/pause' }
   | { type: 'session/resume' }
   | { type: 'session/stop' }
+  | { type: 'ai/test'; ai: AiSettings }
   | { type: 'ai/parse-resume'; resumeText: string; label?: string }
   | { type: 'ai/score-match'; job: JobDetails; profile: ResumeProfile }
   | {

@@ -8,6 +8,7 @@ import {
   removeCustomPortal,
   setCustomPortalEnabled,
 } from '@/lib/custom-portals';
+import { testAiConnection } from '@/lib/ai/test-connection';
 import { TagInput } from '../components/TagInput';
 
 export function SettingsPage() {
@@ -15,6 +16,8 @@ export function SettingsPage() {
   const [draft, setDraft] = useState<Settings>();
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string>();
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<{ ok: boolean; message: string }>();
 
   useEffect(() => {
     if (settings && !draft) setDraft(settings);
@@ -155,6 +158,23 @@ export function SettingsPage() {
             <option value="enthusiastic">Enthusiastic</option>
           </select>
         </Field>
+        <button
+          className="btn-ghost w-full"
+          disabled={testing}
+          onClick={async () => {
+            setTesting(true);
+            setTestResult(undefined);
+            setTestResult(await testAiConnection(draft.ai));
+            setTesting(false);
+          }}
+        >
+          {testing ? 'Testing…' : 'Test connection'}
+        </button>
+        {testResult && (
+          <p className={`text-xs ${testResult.ok ? 'text-green-600' : 'text-red-500'}`}>
+            {testResult.message}
+          </p>
+        )}
       </Section>
 
       <Section title="Custom portals">

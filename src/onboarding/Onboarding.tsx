@@ -4,7 +4,8 @@ import { sendToBackground } from '@/lib/messaging';
 import { extractResumeText } from '@/lib/resume-text';
 import { toDataUrl } from '@/lib/utils';
 import { DEFAULT_MODELS } from '@/lib/constants';
-import type { AiProvider, ResumeProfile } from '@/lib/types';
+import { testAiConnection } from '@/lib/ai/test-connection';
+import type { AiProvider, AiSettings, ResumeProfile } from '@/lib/types';
 
 type Step = 0 | 1 | 2 | 3 | 4;
 
@@ -20,9 +21,28 @@ export function Onboarding() {
   const [busy, setBusy] = useState(false);
   const [aiError, setAiError] = useState<string>();
 
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<{ ok: boolean; message: string }>();
+
   const onProvider = (p: AiProvider) => {
     setProvider(p);
     setModel(DEFAULT_MODELS[p]); // prefill sensible default
+    setTestResult(undefined);
+  };
+
+  const currentAi = (): AiSettings => ({
+    provider,
+    apiKey,
+    model: model || DEFAULT_MODELS[provider],
+    baseUrl: provider === 'custom' ? baseUrl.trim() : '',
+    coverLetterTone: 'professional',
+  });
+
+  const runTest = async () => {
+    setTesting(true);
+    setTestResult(undefined);
+    setTestResult(await testAiConnection(currentAi()));
+    setTesting(false);
   };
 
   const saveAi = async () => {
@@ -134,6 +154,14 @@ export function Onboarding() {
           <label className="label">API key</label>
           <input className="input mb-2" type="password" value={apiKey} placeholder="sk-…" onChange={(e) => setApiKey(e.target.value)} />
           {aiError && <p className="mb-2 text-xs text-red-500">{aiError}</p>}
+          <button className="btn-ghost mb-2 w-full" disabled={testing || !apiKey} onClick={runTest}>
+            {testing ? 'Testing…' : 'Test connection'}
+          </button>
+          {testResult && (
+            <p className={`mb-2 text-xs ${testResult.ok ? 'text-green-600' : 'text-red-500'}`}>
+              {testResult.message}
+            </p>
+          )}
           <div className="mt-2 flex gap-2">
             <button className="btn-ghost" onClick={() => setStep(0)}>Back</button>
             <button className="btn-primary flex-1" disabled={!apiKey} onClick={saveAi}>Continue</button>

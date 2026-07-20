@@ -8,6 +8,7 @@ import {
   saveSession,
   upsertProfile,
 } from '@/lib/storage';
+import { chat } from '@/lib/ai/client';
 import { answerQuestion } from '@/lib/ai/question-answerer';
 import { generateCoverLetter } from '@/lib/ai/cover-letter';
 import { scoreMatch } from '@/lib/ai/matcher';
@@ -113,6 +114,16 @@ async function route(msg: BackgroundRequest): Promise<unknown> {
     }
 
     // ── AI helpers ──
+    case 'ai/test': {
+      // Minimal round-trip to verify provider + key + model + endpoint.
+      const reply = await chat(msg.ai, {
+        system: 'Connectivity test.',
+        user: 'Reply with the single word: OK',
+        maxTokens: 5,
+        temperature: 0,
+      });
+      return { reply };
+    }
     case 'ai/parse-resume': {
       const { ai } = await getSettings();
       const profile = await parseResumeText(ai, msg.resumeText, msg.label);
