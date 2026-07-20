@@ -17,19 +17,23 @@ export function SidePanel() {
   const [tab, setTab] = useState<Tab>('dashboard');
 
   return (
-    <div className="flex h-screen flex-col">
-      <nav className="flex shrink-0 border-b border-slate-200 dark:border-slate-800">
+    <div className="app-bg flex h-screen flex-col">
+      <header className="flex shrink-0 items-center gap-2.5 border-b border-slate-200/70 px-4 py-3 dark:border-slate-800">
+        <div className="logo-mark h-8 w-8 text-sm font-bold">A</div>
+        <div className="text-sm font-bold">AI Auto Job Applier</div>
+      </header>
+      <nav className="flex shrink-0 gap-1 border-b border-slate-200/70 px-2 py-2 dark:border-slate-800">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`flex-1 border-b-2 px-2 py-3 text-xs font-medium transition-colors ${
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-xs font-semibold transition-colors ${
               tab === t.id
-                ? 'border-brand-600 text-brand-600'
-                : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                ? 'bg-brand-600 text-white shadow-sm'
+                : 'text-slate-500 hover:bg-slate-200/60 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800'
             }`}
           >
-            <span className="mr-1">{t.icon}</span>
+            <span>{t.icon}</span>
             {t.label}
           </button>
         ))}

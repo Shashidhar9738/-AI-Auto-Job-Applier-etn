@@ -109,8 +109,16 @@ export function Onboarding() {
   };
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6 py-10">
-      <Progress step={step} />
+    <div className="app-bg flex min-h-screen flex-col items-center justify-center px-6 py-10">
+      <div className="w-full max-w-md">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="logo-mark h-11 w-11 text-lg font-bold">A</div>
+          <div>
+            <div className="text-base font-bold leading-tight">AI Auto Job Applier</div>
+            <div className="text-xs text-slate-500">Apply smarter, not harder</div>
+          </div>
+        </div>
+        <Progress step={step} />
 
       {step === 0 && (
         <Panel title="Welcome 👋" subtitle="Let's set up your AI job applier in a few steps.">
@@ -211,15 +219,21 @@ export function Onboarding() {
           <button className="btn-primary mt-5 w-full" onClick={() => window.close()}>Close</button>
         </Panel>
       )}
+      </div>
     </div>
   );
 }
 
 function Progress({ step }: { step: number }) {
   return (
-    <div className="mb-8 flex gap-1.5">
+    <div className="mb-5 flex gap-1.5">
       {[0, 1, 2, 3, 4].map((i) => (
-        <div key={i} className={`h-1.5 flex-1 rounded-full ${i <= step ? 'bg-brand-600' : 'bg-slate-200 dark:bg-slate-800'}`} />
+        <div
+          key={i}
+          className={`h-1.5 flex-1 rounded-full transition-colors ${
+            i <= step ? 'bg-brand-600' : 'bg-slate-200 dark:bg-slate-800'
+          }`}
+        />
       ))}
     </div>
   );
@@ -227,8 +241,8 @@ function Progress({ step }: { step: number }) {
 
 function Panel({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
   return (
-    <div className="card p-6">
-      <h1 className="text-lg font-semibold">{title}</h1>
+    <div className="card p-6 shadow-xl">
+      <h1 className="text-xl font-bold tracking-tight">{title}</h1>
       <p className="mb-5 mt-1 text-sm text-slate-500">{subtitle}</p>
       {children}
     </div>

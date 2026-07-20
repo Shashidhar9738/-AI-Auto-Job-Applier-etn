@@ -70,10 +70,18 @@ export function Popup() {
   const running = session?.state === 'running';
 
   return (
-    <div className="flex flex-col gap-3 p-4">
+    <div className="app-bg flex flex-col gap-3.5 p-4">
       <header className="flex items-center justify-between">
-        <h1 className="text-sm font-semibold">AI Auto Job Applier</h1>
-        <button className="btn-ghost px-2 py-1 text-xs" onClick={openPanel}>
+        <div className="flex items-center gap-2.5">
+          <div className="logo-mark h-9 w-9 text-base font-bold">A</div>
+          <div>
+            <h1 className="text-sm font-bold leading-tight">AI Auto Job Applier</h1>
+            <p className="text-[11px] text-slate-500">
+              {running ? '● Session running' : 'Ready'}
+            </p>
+          </div>
+        </div>
+        <button className="btn-ghost px-2.5 py-1.5 text-xs" onClick={openPanel}>
           Dashboard ↗
         </button>
       </header>
@@ -145,9 +153,9 @@ export function Popup() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-lg bg-slate-100 p-2 text-center dark:bg-slate-800">
-      <div className="text-lg font-semibold">{value}</div>
-      <div className="text-[11px] text-slate-500">{label}</div>
+    <div className="card p-2.5 text-center">
+      <div className="text-xl font-bold text-brand-600 dark:text-brand-400">{value}</div>
+      <div className="text-[11px] font-medium text-slate-500">{label}</div>
     </div>
   );
 }

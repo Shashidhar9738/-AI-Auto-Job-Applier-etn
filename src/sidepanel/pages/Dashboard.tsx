@@ -131,8 +131,8 @@ export function Dashboard() {
 function Kpi({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="card p-3 text-center">
-      <div className="text-xl font-semibold">{value}</div>
-      <div className="text-[11px] text-slate-500">{label}</div>
+      <div className="text-2xl font-bold text-brand-600 dark:text-brand-400">{value}</div>
+      <div className="text-[11px] font-medium text-slate-500">{label}</div>
     </div>
   );
 }
