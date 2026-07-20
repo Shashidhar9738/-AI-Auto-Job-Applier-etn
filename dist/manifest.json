@@ -1,0 +1,86 @@
+{
+  "manifest_version": 3,
+  "name": "AI Auto Job Applier",
+  "version": "0.1.0",
+  "description": "AI-powered auto job applier Chrome Extension (Manifest V3)",
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AI Auto Job Applier"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting",
+    "alarms",
+    "notifications",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "https://*.linkedin.com/*",
+    "https://*.indeed.com/*",
+    "https://*.naukri.com/*",
+    "https://*.glassdoor.com/*",
+    "https://*.monster.com/*",
+    "https://*.internshala.com/*",
+    "https://*.wellfound.com/*",
+    "https://*.ziprecruiter.com/*",
+    "https://*.dice.com/*",
+    "https://*.simplyhired.com/*",
+    "https://*.greenhouse.io/*",
+    "https://*.lever.co/*",
+    "https://*.myworkdayjobs.com/*",
+    "https://*.ashbyhq.com/*",
+    "https://api.openai.com/*",
+    "https://api.anthropic.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.linkedin.com/*",
+        "https://*.indeed.com/*",
+        "https://*.naukri.com/*",
+        "https://*.glassdoor.com/*",
+        "https://*.monster.com/*",
+        "https://*.internshala.com/*",
+        "https://*.wellfound.com/*",
+        "https://*.ziprecruiter.com/*",
+        "https://*.dice.com/*",
+        "https://*.simplyhired.com/*",
+        "https://*.greenhouse.io/*",
+        "https://*.lever.co/*",
+        "https://*.myworkdayjobs.com/*",
+        "https://*.ashbyhq.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "pdf.worker.min.mjs",
+        "icon-128.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}
