@@ -12,17 +12,39 @@ export function Onboarding() {
   const [step, setStep] = useState<Step>(0);
   const [provider, setProvider] = useState<AiProvider>('anthropic');
   const [apiKey, setApiKey] = useState('');
+  const [model, setModel] = useState('');
+  const [baseUrl, setBaseUrl] = useState('');
   const [tosOk, setTosOk] = useState(false);
   const [profile, setProfile] = useState<ResumeProfile>();
   const [status, setStatus] = useState<string>();
   const [busy, setBusy] = useState(false);
+  const [aiError, setAiError] = useState<string>();
+
+  const onProvider = (p: AiProvider) => {
+    setProvider(p);
+    setModel(DEFAULT_MODELS[p]); // prefill sensible default
+  };
 
   const saveAi = async () => {
+    setAiError(undefined);
+    // Custom endpoint needs host permission for background fetch — request it
+    // here (before any await) so the click's user gesture stays valid.
+    if (provider === 'custom') {
+      if (!baseUrl.trim()) return setAiError('Enter the Base URL for your provider.');
+      try {
+        const origin = new URL(baseUrl).origin + '/*';
+        const granted = await chrome.permissions.request({ origins: [origin] });
+        if (!granted) return setAiError('Permission denied for that endpoint.');
+      } catch {
+        return setAiError('Invalid Base URL.');
+      }
+    }
     await saveSettings({
       ai: {
         provider,
         apiKey,
-        model: DEFAULT_MODELS[provider],
+        model: model || DEFAULT_MODELS[provider],
+        baseUrl: provider === 'custom' ? baseUrl.trim() : '',
         coverLetterTone: 'professional',
       },
       acknowledgedTosRisk: tosOk,
@@ -91,13 +113,28 @@ export function Onboarding() {
       {step === 1 && (
         <Panel title="Connect an AI provider" subtitle="Used for resume parsing, matching, and cover letters. Your key stays on this device.">
           <label className="label">Provider</label>
-          <select className="input mb-3" value={provider} onChange={(e) => setProvider(e.target.value as AiProvider)}>
+          <select className="input mb-3" value={provider} onChange={(e) => onProvider(e.target.value as AiProvider)}>
             <option value="anthropic">Anthropic (Claude)</option>
             <option value="openai">OpenAI</option>
+            <option value="openrouter">OpenRouter</option>
+            <option value="custom">Custom (OpenAI-compatible — DeepSeek, Groq, etc.)</option>
           </select>
+          {provider === 'custom' && (
+            <>
+              <label className="label">Base URL</label>
+              <input className="input mb-3" value={baseUrl} placeholder="https://api.deepseek.com" onChange={(e) => setBaseUrl(e.target.value)} />
+            </>
+          )}
+          {(provider === 'openrouter' || provider === 'custom') && (
+            <>
+              <label className="label">Model</label>
+              <input className="input mb-3" value={model} placeholder="e.g. deepseek/deepseek-chat" onChange={(e) => setModel(e.target.value)} />
+            </>
+          )}
           <label className="label">API key</label>
-          <input className="input mb-4" type="password" value={apiKey} placeholder="sk-…" onChange={(e) => setApiKey(e.target.value)} />
-          <div className="flex gap-2">
+          <input className="input mb-2" type="password" value={apiKey} placeholder="sk-…" onChange={(e) => setApiKey(e.target.value)} />
+          {aiError && <p className="mb-2 text-xs text-red-500">{aiError}</p>}
+          <div className="mt-2 flex gap-2">
             <button className="btn-ghost" onClick={() => setStep(0)}>Back</button>
             <button className="btn-primary flex-1" disabled={!apiKey} onClick={saveAi}>Continue</button>
           </div>

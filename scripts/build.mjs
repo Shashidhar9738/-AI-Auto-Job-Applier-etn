@@ -119,7 +119,13 @@ async function buildManifest() {
     side_panel: { default_path: 'sidepanel.html' },
     background: { service_worker: 'service-worker.js', type: 'module' },
     permissions: ['storage', 'tabs', 'scripting', 'alarms', 'notifications', 'sidePanel'],
-    host_permissions: [...portals, 'https://api.openai.com/*', 'https://api.anthropic.com/*'],
+    host_permissions: [
+      ...portals,
+      'https://api.openai.com/*',
+      'https://api.anthropic.com/*',
+      'https://openrouter.ai/*',
+    ],
+    // Covers custom job portals AND custom OpenAI-compatible AI endpoints.
     optional_host_permissions: ['https://*/*'],
     content_scripts: [{ matches: portals, js: ['content.js'], run_at: 'document_idle' }],
     web_accessible_resources: [

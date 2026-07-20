@@ -227,7 +227,7 @@ export interface FormField {
 
 // ─── Settings ───────────────────────────────────────────────────────────────
 
-export type AiProvider = 'openai' | 'anthropic';
+export type AiProvider = 'openai' | 'anthropic' | 'openrouter' | 'custom';
 export type CoverLetterTone = 'professional' | 'conversational' | 'enthusiastic';
 
 export interface RateLimitSettings {
@@ -256,6 +256,8 @@ export interface AiSettings {
   /** API key is stored locally only. Never synced. */
   apiKey: string;
   model: string;
+  /** Endpoint for the 'custom' provider (any OpenAI-compatible API). */
+  baseUrl?: string;
   coverLetterTone: CoverLetterTone;
 }
 

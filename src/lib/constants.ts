@@ -52,6 +52,7 @@ export const DEFAULT_SETTINGS: Settings = {
     provider: 'anthropic',
     apiKey: '',
     model: 'claude-sonnet-5',
+    baseUrl: '',
     coverLetterTone: 'professional',
   },
   customPortals: [],
@@ -62,4 +63,11 @@ export const DEFAULT_SETTINGS: Settings = {
 export const DEFAULT_MODELS = {
   anthropic: 'claude-sonnet-5',
   openai: 'gpt-4o',
+  // OpenRouter uses "vendor/model" slugs. This one is cheap and widely available;
+  // swap for any slug from https://openrouter.ai/models (e.g.
+  // "anthropic/claude-3.5-sonnet", "google/gemini-flash-1.5", "deepseek/deepseek-chat").
+  openrouter: 'openai/gpt-4o-mini',
+  // No default for custom — the user supplies both base URL and model
+  // (e.g. DeepSeek: "deepseek-chat", Groq: "llama-3.3-70b-versatile").
+  custom: '',
 } as const;

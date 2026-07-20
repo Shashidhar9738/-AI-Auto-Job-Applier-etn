@@ -172,8 +172,16 @@ usually just selectors + a few overrides.
 
 ## Configuration notes
 
-- **AI provider/model** are set in onboarding and Settings. Default is Claude
-  (`claude-sonnet-5`); switch to OpenAI (`gpt-4o`) in Settings → AI.
+- **AI provider/model** are set in onboarding and Settings → AI. Four options:
+  - **Anthropic (Claude)** — default (`claude-sonnet-5`)
+  - **OpenAI** — `gpt-4o`
+  - **OpenRouter** — one key for many models; use `vendor/model` slugs
+    (`deepseek/deepseek-chat`, `anthropic/claude-3.5-sonnet`, …)
+  - **Custom (OpenAI-compatible)** — paste any base URL + model. Works with
+    **DeepSeek** (`https://api.deepseek.com`), Groq, Together, Mistral, Azure
+    OpenAI, local Ollama, and any future provider that speaks the OpenAI Chat
+    Completions API — no code change needed. The extension requests host
+    permission for that endpoint on save.
 - **Rate limiting** defaults to 10 applies/hour with 0.7–2.5 s action delays.
 - **Selectors drift:** portals change their DOM often. When a flow breaks, the
   adapter's `selectors` are the first thing to update.

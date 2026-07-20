@@ -60,6 +60,7 @@ export default defineManifest({
     // AI providers (used by the background worker for fetch calls)
     'https://api.openai.com/*',
     'https://api.anthropic.com/*',
+    'https://openrouter.ai/*',
   ],
   // Requested on demand when the user adds a custom portal in Settings.
   optional_host_permissions: ['https://*/*'],

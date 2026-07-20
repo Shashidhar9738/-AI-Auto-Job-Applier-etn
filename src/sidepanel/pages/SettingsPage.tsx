@@ -14,6 +14,7 @@ export function SettingsPage() {
   const settings = useSettings();
   const [draft, setDraft] = useState<Settings>();
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string>();
 
   useEffect(() => {
     if (settings && !draft) setDraft(settings);
@@ -23,6 +24,22 @@ export function SettingsPage() {
 
   const patch = (p: Partial<Settings>) => setDraft({ ...draft, ...p });
   const save = async () => {
+    setError(undefined);
+    // A custom endpoint needs host permission to fetch from the service worker.
+    // Request it FIRST — before any await — so the click's user gesture is valid.
+    if (draft.ai.provider === 'custom' && draft.ai.baseUrl) {
+      try {
+        const origin = new URL(draft.ai.baseUrl).origin + '/*';
+        const granted = await chrome.permissions.request({ origins: [origin] });
+        if (!granted) {
+          setError('Permission denied for the custom AI endpoint.');
+          return;
+        }
+      } catch {
+        setError('Invalid Base URL.');
+        return;
+      }
+    }
     // customPortals are managed live (permission-gated), so never overwrite
     // them from a possibly-stale draft — always persist the freshest list.
     const { customPortals } = await getSettings();
@@ -110,13 +127,22 @@ export function SettingsPage() {
               }}>
               <option value="anthropic">Anthropic (Claude)</option>
               <option value="openai">OpenAI</option>
+              <option value="openrouter">OpenRouter</option>
+              <option value="custom">Custom (OpenAI-compatible)</option>
             </select>
           </Field>
           <Field label="Model">
-            <input className="input" value={draft.ai.model}
+            <input className="input" value={draft.ai.model} placeholder={modelHint(draft.ai.provider)}
               onChange={(e) => patch({ ai: { ...draft.ai, model: e.target.value } })} />
           </Field>
         </div>
+        {draft.ai.provider === 'custom' && (
+          <Field label="Base URL">
+            <input className="input" value={draft.ai.baseUrl ?? ''}
+              placeholder="e.g. https://api.deepseek.com"
+              onChange={(e) => patch({ ai: { ...draft.ai, baseUrl: e.target.value } })} />
+          </Field>
+        )}
         <Field label="API key (stored locally only)">
           <input type="password" className="input" value={draft.ai.apiKey} placeholder="sk-…"
             onChange={(e) => patch({ ai: { ...draft.ai, apiKey: e.target.value } })} />
@@ -147,6 +173,7 @@ export function SettingsPage() {
         />
       </Section>
 
+      {error && <p className="text-xs text-red-500">{error}</p>}
       <button className="btn-primary sticky bottom-0 w-full" onClick={save}>
         {saved ? '✓ Saved' : 'Save settings'}
       </button>
@@ -179,6 +206,21 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: 
       {label}
     </label>
   );
+}
+
+function modelHint(provider: string): string {
+  switch (provider) {
+    case 'anthropic':
+      return 'claude-sonnet-5';
+    case 'openai':
+      return 'gpt-4o';
+    case 'openrouter':
+      return 'e.g. deepseek/deepseek-chat';
+    case 'custom':
+      return 'e.g. deepseek-chat';
+    default:
+      return '';
+  }
 }
 
 function CustomPortals() {
