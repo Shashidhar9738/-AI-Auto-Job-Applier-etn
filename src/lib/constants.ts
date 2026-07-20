@@ -54,6 +54,7 @@ export const DEFAULT_SETTINGS: Settings = {
     model: 'claude-sonnet-5',
     coverLetterTone: 'professional',
   },
+  customPortals: [],
   acknowledgedTosRisk: false,
   onboardingComplete: false,
 };

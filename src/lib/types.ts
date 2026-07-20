@@ -259,6 +259,27 @@ export interface AiSettings {
   coverLetterTone: CoverLetterTone;
 }
 
+/**
+ * A user-added job portal. The content script is registered for `origin` at
+ * runtime (after the user grants the host permission) and handled by the
+ * generic adapter. Optional selector overrides refine job extraction.
+ */
+export interface CustomPortal {
+  id: string;
+  label: string;
+  /** Match pattern, e.g. "https://careers.example.com/*". */
+  origin: string;
+  enabled: boolean;
+  /** Optional CSS selectors to improve job extraction on this site. */
+  selectors?: {
+    title?: string;
+    company?: string;
+    location?: string;
+    description?: string;
+  };
+  createdAt: number;
+}
+
 export interface Settings {
   applyMode: ApplyMode;
   matchThreshold: number; // skip below this
@@ -268,6 +289,7 @@ export interface Settings {
   schedule: ScheduleSettings;
   notifications: NotificationSettings;
   ai: AiSettings;
+  customPortals: CustomPortal[];
   acknowledgedTosRisk: boolean;
   onboardingComplete: boolean;
 }

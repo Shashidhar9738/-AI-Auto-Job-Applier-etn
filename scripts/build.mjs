@@ -120,6 +120,7 @@ async function buildManifest() {
     background: { service_worker: 'service-worker.js', type: 'module' },
     permissions: ['storage', 'tabs', 'scripting', 'alarms', 'notifications', 'sidePanel'],
     host_permissions: [...portals, 'https://api.openai.com/*', 'https://api.anthropic.com/*'],
+    optional_host_permissions: ['https://*/*'],
     content_scripts: [{ matches: portals, js: ['content.js'], run_at: 'document_idle' }],
     web_accessible_resources: [
       { resources: ['pdf.worker.min.mjs', 'icon-128.png'], matches: ['<all_urls>'] },

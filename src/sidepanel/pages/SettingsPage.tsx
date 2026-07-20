@@ -1,8 +1,13 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { useSettings } from '@/lib/hooks';
-import { saveSettings } from '@/lib/storage';
+import { getSettings, saveSettings } from '@/lib/storage';
 import { DEFAULT_MODELS } from '@/lib/constants';
 import type { AiProvider, CoverLetterTone, Settings } from '@/lib/types';
+import {
+  addCustomPortal,
+  removeCustomPortal,
+  setCustomPortalEnabled,
+} from '@/lib/custom-portals';
 import { TagInput } from '../components/TagInput';
 
 export function SettingsPage() {
@@ -18,7 +23,10 @@ export function SettingsPage() {
 
   const patch = (p: Partial<Settings>) => setDraft({ ...draft, ...p });
   const save = async () => {
-    await saveSettings(draft);
+    // customPortals are managed live (permission-gated), so never overwrite
+    // them from a possibly-stale draft — always persist the freshest list.
+    const { customPortals } = await getSettings();
+    await saveSettings({ ...draft, customPortals });
     setSaved(true);
     setTimeout(() => setSaved(false), 1500);
   };
@@ -123,6 +131,14 @@ export function SettingsPage() {
         </Field>
       </Section>
 
+      <Section title="Custom portals">
+        <p className="text-xs text-slate-500">
+          Add any job site not built in. We'll ask permission for that site, then
+          auto-fill it with the generic engine.
+        </p>
+        <CustomPortals />
+      </Section>
+
       <Section title="Compliance">
         <Toggle
           checked={draft.acknowledgedTosRisk}
@@ -162,5 +178,80 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: 
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
       {label}
     </label>
+  );
+}
+
+function CustomPortals() {
+  const settings = useSettings();
+  const portals = settings?.customPortals ?? [];
+  const [url, setUrl] = useState('');
+  const [label, setLabel] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string>();
+
+  const add = async () => {
+    if (!url.trim()) return;
+    setBusy(true);
+    setError(undefined);
+    try {
+      // Runs in this click handler so the permission prompt has a user gesture.
+      await addCustomPortal(url, label);
+      setUrl('');
+      setLabel('');
+    } catch (e) {
+      setError(String(e instanceof Error ? e.message : e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      {portals.length > 0 && (
+        <ul className="space-y-1.5">
+          {portals.map((p) => (
+            <li key={p.id} className="flex items-center gap-2 rounded-lg bg-slate-100 px-2.5 py-1.5 text-sm dark:bg-slate-800">
+              <input
+                type="checkbox"
+                checked={p.enabled}
+                onChange={(e) => setCustomPortalEnabled(p.id, e.target.checked)}
+                title={p.enabled ? 'Enabled' : 'Disabled'}
+              />
+              <div className="min-w-0 flex-1">
+                <div className="truncate font-medium">{p.label}</div>
+                <div className="truncate text-[11px] text-slate-500">{p.origin}</div>
+              </div>
+              <button
+                className="text-xs text-slate-400 hover:text-red-500"
+                onClick={() => removeCustomPortal(p.id)}
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="space-y-2">
+        <input
+          className="input"
+          placeholder="Job site URL or domain (e.g. careers.acme.com)"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+        />
+        <div className="flex gap-2">
+          <input
+            className="input flex-1"
+            placeholder="Label (optional)"
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+          />
+          <button className="btn-primary" onClick={add} disabled={busy || !url.trim()}>
+            {busy ? 'Adding…' : 'Add portal'}
+          </button>
+        </div>
+        {error && <p className="text-xs text-red-500">{error}</p>}
+      </div>
+    </div>
   );
 }

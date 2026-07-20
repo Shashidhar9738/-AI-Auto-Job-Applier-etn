@@ -136,7 +136,24 @@ npm run dev                    # HMR dev build (standard toolchain)
 
 ---
 
-## Adding a new portal adapter
+## Adding portals from the UI (no code)
+
+**Settings → Custom portals** lets you add any job site at runtime:
+
+1. Paste the site's URL or domain (e.g. `careers.acme.com`) and an optional label.
+2. Click **Add portal** → Chrome prompts to grant access to *that site only*.
+3. The content script is registered for that origin on the fly and the **generic
+   adapter** handles it (heuristic field detection + label-based buttons).
+
+Enable/disable or remove a custom portal any time; removing it also revokes the
+host permission. This uses `optional_host_permissions` +
+`chrome.scripting.registerContentScripts`, so the extension never holds broad
+access it hasn't been explicitly granted. See `src/lib/custom-portals.ts`.
+
+## Adding a *dedicated* portal adapter (code)
+
+For a site that needs bespoke selectors or quirk handling (better than the
+generic fallback):
 
 1. Create `src/content/adapters/<portal>-adapter.ts` extending `BaseAdapter`.
 2. Implement `id`, `name`, `matchUrl()`, `extractJobDetails()`, and fill the

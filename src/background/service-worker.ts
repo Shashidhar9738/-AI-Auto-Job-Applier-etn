@@ -15,6 +15,7 @@ import { parseResumeText } from '@/lib/ai/resume-parser';
 import { applyToTab } from './apply-controller';
 import { notify } from './notifications';
 import { isScheduleAlarm, syncSchedule } from './scheduler';
+import { syncCustomPortals } from '@/lib/custom-portals';
 
 /**
  * Background service worker: the extension's brain. It holds the AI key, routes
@@ -34,6 +35,12 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
     chrome.tabs.create({ url: chrome.runtime.getURL('onboarding.html') });
   }
   await syncSchedule();
+  await syncCustomPortals();
+});
+
+// Dynamic content-script registrations are cleared on browser start; restore.
+chrome.runtime.onStartup.addListener(() => {
+  void syncCustomPortals();
 });
 
 // Re-sync the daily alarm whenever schedule settings change.
