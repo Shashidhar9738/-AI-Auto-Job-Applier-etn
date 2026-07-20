@@ -9,6 +9,7 @@ import {
   setCustomPortalEnabled,
 } from '@/lib/custom-portals';
 import { testAiConnection } from '@/lib/ai/test-connection';
+import { ModelPicker } from '@/components/ModelPicker';
 import { TagInput } from '../components/TagInput';
 
 export function SettingsPage() {
@@ -135,8 +136,11 @@ export function SettingsPage() {
             </select>
           </Field>
           <Field label="Model">
-            <input className="input" value={draft.ai.model} placeholder={modelHint(draft.ai.provider)}
-              onChange={(e) => patch({ ai: { ...draft.ai, model: e.target.value } })} />
+            <ModelPicker
+              provider={draft.ai.provider}
+              value={draft.ai.model}
+              onChange={(model) => patch({ ai: { ...draft.ai, model } })}
+            />
           </Field>
         </div>
         {draft.ai.provider === 'custom' && (
@@ -226,21 +230,6 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: 
       {label}
     </label>
   );
-}
-
-function modelHint(provider: string): string {
-  switch (provider) {
-    case 'anthropic':
-      return 'claude-sonnet-5';
-    case 'openai':
-      return 'gpt-4o';
-    case 'openrouter':
-      return 'e.g. deepseek/deepseek-chat';
-    case 'custom':
-      return 'e.g. deepseek-chat';
-    default:
-      return '';
-  }
 }
 
 function CustomPortals() {

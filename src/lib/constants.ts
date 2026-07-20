@@ -60,6 +60,31 @@ export const DEFAULT_SETTINGS: Settings = {
   onboardingComplete: false,
 };
 
+/** Curated model choices shown as a dropdown per provider (UI convenience).
+ *  The user can always pick "Other…" to type any slug. */
+export const MODEL_OPTIONS: Record<string, { value: string; label: string }[]> = {
+  anthropic: [
+    { value: 'claude-sonnet-5', label: 'Claude Sonnet 5 — balanced (recommended)' },
+    { value: 'claude-opus-4-8', label: 'Claude Opus 4.8 — highest quality' },
+    { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5 — fast & cheap' },
+  ],
+  openai: [
+    { value: 'gpt-4o', label: 'GPT-4o' },
+    { value: 'gpt-4o-mini', label: 'GPT-4o mini — cheap' },
+  ],
+  openrouter: [
+    { value: 'openai/gpt-4o-mini', label: 'GPT-4o mini — cheap' },
+    { value: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet' },
+    { value: 'deepseek/deepseek-chat', label: 'DeepSeek Chat' },
+    { value: 'google/gemini-2.0-flash-001', label: 'Gemini 2.0 Flash' },
+    { value: 'meta-llama/llama-3.3-70b-instruct', label: 'Llama 3.3 70B' },
+    { value: 'deepseek/deepseek-r1:free', label: 'DeepSeek R1 — FREE' },
+    { value: 'google/gemini-2.0-flash-exp:free', label: 'Gemini 2.0 Flash — FREE' },
+  ],
+  // Custom is free-text (any slug); no curated list.
+  custom: [],
+};
+
 export const DEFAULT_MODELS = {
   anthropic: 'claude-sonnet-5',
   openai: 'gpt-4o',

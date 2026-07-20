@@ -5,6 +5,7 @@ import { extractResumeText } from '@/lib/resume-text';
 import { toDataUrl } from '@/lib/utils';
 import { DEFAULT_MODELS } from '@/lib/constants';
 import { testAiConnection } from '@/lib/ai/test-connection';
+import { ModelPicker } from '@/components/ModelPicker';
 import type { AiProvider, AiSettings, ResumeProfile } from '@/lib/types';
 
 type Step = 0 | 1 | 2 | 3 | 4;
@@ -153,12 +154,10 @@ export function Onboarding() {
               <input className="input mb-3" value={baseUrl} placeholder="https://api.deepseek.com" onChange={(e) => setBaseUrl(e.target.value)} />
             </>
           )}
-          {(provider === 'openrouter' || provider === 'custom') && (
-            <>
-              <label className="label">Model</label>
-              <input className="input mb-3" value={model} placeholder="e.g. deepseek/deepseek-chat" onChange={(e) => setModel(e.target.value)} />
-            </>
-          )}
+          <label className="label">Model</label>
+          <div className="mb-3">
+            <ModelPicker provider={provider} value={model} onChange={setModel} />
+          </div>
           <label className="label">API key</label>
           <input className="input mb-2" type="password" value={apiKey} placeholder="sk-…" onChange={(e) => setApiKey(e.target.value)} />
           {aiError && <p className="mb-2 text-xs text-red-500">{aiError}</p>}
