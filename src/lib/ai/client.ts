@@ -27,10 +27,7 @@ export async function chat(ai: AiSettings, opts: ChatOptions): Promise<string> {
     case 'anthropic':
       return callAnthropic(ai, opts);
     case 'gemini':
-      // Google's OpenAI-compatible endpoint; the Gemini API key is the bearer.
-      return callOpenAICompatible(ai, opts, {
-        url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
-      });
+      return callGemini(ai, opts);
     case 'openrouter':
       return callOpenAICompatible(ai, opts, {
         url: 'https://openrouter.ai/api/v1/chat/completions',
@@ -95,6 +92,42 @@ async function callAnthropic(ai: AiSettings, opts: ChatOptions): Promise<string>
 }
 
 /**
+ * Google Gemini via its NATIVE API (generateContent), authenticated with the
+ * `X-goog-api-key` header — matching Google's own curl. This handles the newer
+ * `AQ.`-style keys that the OpenAI-compatibility layer rejects.
+ */
+async function callGemini(ai: AiSettings, opts: ChatOptions): Promise<string> {
+  const model = ai.model || 'gemini-2.0-flash';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+
+  const system =
+    opts.system +
+    (opts.json ? '\n\nRespond with valid JSON only. No prose, no code fences.' : '');
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-goog-api-key': ai.apiKey },
+    body: JSON.stringify({
+      systemInstruction: system ? { parts: [{ text: system }] } : undefined,
+      contents: [{ role: 'user', parts: [{ text: opts.user }] }],
+      generationConfig: {
+        maxOutputTokens: opts.maxTokens ?? 1024,
+        temperature: opts.temperature ?? 0.4,
+        ...(opts.json ? { responseMimeType: 'application/json' } : {}),
+      },
+    }),
+  });
+  if (!res.ok) throw new AiError(`Gemini API error ${res.status}: ${await res.text()}`);
+  const data = await res.json();
+  const text: string =
+    data?.candidates?.[0]?.content?.parts
+      ?.map((p: { text?: string }) => p.text ?? '')
+      .join('') ?? '';
+  if (!text) throw new AiError('Empty response from Gemini.');
+  return text.trim();
+}
+
+/**
  * Shared caller for OpenAI and any OpenAI-compatible gateway (OpenRouter). They
  * share the Chat Completions request/response shape; only the URL and a couple
  * of headers differ.
@@ -149,6 +182,21 @@ export async function listModels(ai: AiSettings): Promise<string[]> {
     return (data?.data ?? []).map((m: { id: string }) => m.id).filter(Boolean);
   }
 
+  if (ai.provider === 'gemini') {
+    const res = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000',
+      { headers: { 'x-goog-api-key': ai.apiKey } },
+    );
+    if (!res.ok) throw new AiError(`API error ${res.status}: ${await res.text()}`);
+    const data = await res.json();
+    return (data?.models ?? [])
+      .filter((m: { supportedGenerationMethods?: string[] }) =>
+        (m.supportedGenerationMethods ?? []).includes('generateContent'),
+      )
+      .map((m: { name?: string }) => String(m.name ?? '').replace(/^models\//, ''))
+      .filter(Boolean);
+  }
+
   const res = await fetch(modelsUrl(ai), {
     headers: { authorization: `Bearer ${ai.apiKey}` },
   });
@@ -164,8 +212,6 @@ function modelsUrl(ai: AiSettings): string {
   switch (ai.provider) {
     case 'openai':
       return 'https://api.openai.com/v1/models';
-    case 'gemini':
-      return 'https://generativelanguage.googleapis.com/v1beta/openai/models';
     case 'openrouter':
       return 'https://openrouter.ai/api/v1/models';
     case 'custom': {
