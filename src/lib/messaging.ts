@@ -25,6 +25,7 @@ export type BackgroundRequest =
   | { type: 'session/resume' }
   | { type: 'session/stop' }
   | { type: 'ai/test'; ai: AiSettings }
+  | { type: 'ai/list-models'; ai: AiSettings }
   | { type: 'ai/parse-resume'; resumeText: string; label?: string }
   | { type: 'ai/score-match'; job: JobDetails; profile: ResumeProfile }
   | {

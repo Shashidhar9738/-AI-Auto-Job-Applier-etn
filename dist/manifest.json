@@ -44,7 +44,8 @@
     "https://*.ashbyhq.com/*",
     "https://api.openai.com/*",
     "https://api.anthropic.com/*",
-    "https://openrouter.ai/*"
+    "https://openrouter.ai/*",
+    "https://generativelanguage.googleapis.com/*"
   ],
   "optional_host_permissions": [
     "https://*/*"

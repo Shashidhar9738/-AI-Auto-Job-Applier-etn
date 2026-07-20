@@ -61,6 +61,7 @@ export default defineManifest({
     'https://api.openai.com/*',
     'https://api.anthropic.com/*',
     'https://openrouter.ai/*',
+    'https://generativelanguage.googleapis.com/*',
   ],
   // Requested on demand when the user adds a custom portal in Settings.
   optional_host_permissions: ['https://*/*'],

@@ -146,6 +146,7 @@ export function Onboarding() {
           <select className="input mb-3" value={provider} onChange={(e) => onProvider(e.target.value as AiProvider)}>
             <option value="anthropic">Anthropic (Claude)</option>
             <option value="openai">OpenAI</option>
+            <option value="gemini">Google Gemini (free tier)</option>
             <option value="openrouter">OpenRouter</option>
             <option value="custom">Custom (OpenAI-compatible — DeepSeek, Groq, etc.)</option>
           </select>
@@ -161,7 +162,7 @@ export function Onboarding() {
           )}
           <label className="label">Model</label>
           <div className="mb-3">
-            <ModelPicker provider={provider} value={model} onChange={setModel} />
+            <ModelPicker ai={currentAi()} onChange={setModel} />
           </div>
           <label className="label">API key</label>
           <input className="input mb-2" type="password" value={apiKey} placeholder="sk-…" onChange={(e) => setApiKey(e.target.value)} />

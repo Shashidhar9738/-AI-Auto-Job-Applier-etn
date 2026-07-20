@@ -26,6 +26,11 @@ export async function chat(ai: AiSettings, opts: ChatOptions): Promise<string> {
   switch (ai.provider) {
     case 'anthropic':
       return callAnthropic(ai, opts);
+    case 'gemini':
+      // Google's OpenAI-compatible endpoint; the Gemini API key is the bearer.
+      return callOpenAICompatible(ai, opts, {
+        url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+      });
     case 'openrouter':
       return callOpenAICompatible(ai, opts, {
         url: 'https://openrouter.ai/api/v1/chat/completions',
@@ -122,6 +127,56 @@ async function callOpenAICompatible(
   const text = data?.choices?.[0]?.message?.content;
   if (typeof text !== 'string') throw new AiError('Unexpected API response shape.');
   return text.trim();
+}
+
+/**
+ * Fetch the provider's live model list. Anthropic uses its own models endpoint;
+ * everything else uses the OpenAI-compatible `/models`. Returns bare model ids.
+ */
+export async function listModels(ai: AiSettings): Promise<string[]> {
+  if (!ai.apiKey) throw new AiError('No API key set.');
+
+  if (ai.provider === 'anthropic') {
+    const res = await fetch('https://api.anthropic.com/v1/models?limit=1000', {
+      headers: {
+        'x-api-key': ai.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+    });
+    if (!res.ok) throw new AiError(`API error ${res.status}: ${await res.text()}`);
+    const data = await res.json();
+    return (data?.data ?? []).map((m: { id: string }) => m.id).filter(Boolean);
+  }
+
+  const res = await fetch(modelsUrl(ai), {
+    headers: { authorization: `Bearer ${ai.apiKey}` },
+  });
+  if (!res.ok) throw new AiError(`API error ${res.status}: ${await res.text()}`);
+  const data = await res.json();
+  const arr: Array<{ id?: string; name?: string }> = data?.data ?? data?.models ?? [];
+  return arr
+    .map((m) => String(m.id ?? m.name ?? '').replace(/^models\//, ''))
+    .filter(Boolean);
+}
+
+function modelsUrl(ai: AiSettings): string {
+  switch (ai.provider) {
+    case 'openai':
+      return 'https://api.openai.com/v1/models';
+    case 'gemini':
+      return 'https://generativelanguage.googleapis.com/v1beta/openai/models';
+    case 'openrouter':
+      return 'https://openrouter.ai/api/v1/models';
+    case 'custom': {
+      const base = (ai.baseUrl ?? '').trim().replace(/\/+$/, '');
+      if (/\/chat\/completions$/.test(base)) return base.replace(/\/chat\/completions$/, '/models');
+      if (/\/v\d+$/.test(base)) return `${base}/models`;
+      return `${base}/v1/models`;
+    }
+    default:
+      throw new AiError('Model listing not supported for this provider.');
+  }
 }
 
 /** Parse a model's JSON reply, tolerating stray code fences. */

@@ -227,7 +227,7 @@ export interface FormField {
 
 // ─── Settings ───────────────────────────────────────────────────────────────
 
-export type AiProvider = 'openai' | 'anthropic' | 'openrouter' | 'custom';
+export type AiProvider = 'openai' | 'anthropic' | 'gemini' | 'openrouter' | 'custom';
 export type CoverLetterTone = 'professional' | 'conversational' | 'enthusiastic';
 
 export interface RateLimitSettings {

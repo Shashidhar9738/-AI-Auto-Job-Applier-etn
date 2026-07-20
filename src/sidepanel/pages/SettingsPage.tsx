@@ -132,14 +132,14 @@ export function SettingsPage() {
               }}>
               <option value="anthropic">Anthropic (Claude)</option>
               <option value="openai">OpenAI</option>
+              <option value="gemini">Google Gemini</option>
               <option value="openrouter">OpenRouter</option>
               <option value="custom">Custom (OpenAI-compatible)</option>
             </select>
           </Field>
           <Field label="Model">
             <ModelPicker
-              provider={draft.ai.provider}
-              value={draft.ai.model}
+              ai={draft.ai}
               onChange={(model) => patch({ ai: { ...draft.ai, model } })}
             />
           </Field>

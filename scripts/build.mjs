@@ -124,6 +124,7 @@ async function buildManifest() {
       'https://api.openai.com/*',
       'https://api.anthropic.com/*',
       'https://openrouter.ai/*',
+      'https://generativelanguage.googleapis.com/*',
     ],
     // Covers custom job portals AND custom OpenAI-compatible AI endpoints.
     optional_host_permissions: ['https://*/*'],

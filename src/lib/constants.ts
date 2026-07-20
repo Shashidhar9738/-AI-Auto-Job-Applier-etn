@@ -72,6 +72,12 @@ export const MODEL_OPTIONS: Record<string, { value: string; label: string }[]> =
     { value: 'gpt-4o', label: 'GPT-4o' },
     { value: 'gpt-4o-mini', label: 'GPT-4o mini — cheap' },
   ],
+  gemini: [
+    { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash — fast (recommended)' },
+    { value: 'gemini-2.0-flash-lite', label: 'Gemini 2.0 Flash-Lite — cheapest' },
+    { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' },
+    { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro — highest quality' },
+  ],
   openrouter: [
     { value: 'openai/gpt-4o-mini', label: 'GPT-4o mini — cheap' },
     { value: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet' },
@@ -101,6 +107,7 @@ export const CUSTOM_PRESETS: { label: string; baseUrl: string; model: string; fr
 export const DEFAULT_MODELS = {
   anthropic: 'claude-sonnet-5',
   openai: 'gpt-4o',
+  gemini: 'gemini-2.0-flash',
   // OpenRouter uses "vendor/model" slugs. This one is cheap and widely available;
   // swap for any slug from https://openrouter.ai/models (e.g.
   // "anthropic/claude-3.5-sonnet", "google/gemini-flash-1.5", "deepseek/deepseek-chat").

@@ -8,7 +8,7 @@ import {
   saveSession,
   upsertProfile,
 } from '@/lib/storage';
-import { chat } from '@/lib/ai/client';
+import { chat, listModels } from '@/lib/ai/client';
 import { answerQuestion } from '@/lib/ai/question-answerer';
 import { generateCoverLetter } from '@/lib/ai/cover-letter';
 import { scoreMatch } from '@/lib/ai/matcher';
@@ -124,6 +124,8 @@ async function route(msg: BackgroundRequest): Promise<unknown> {
       });
       return { reply };
     }
+    case 'ai/list-models':
+      return listModels(msg.ai);
     case 'ai/parse-resume': {
       const { ai } = await getSettings();
       const profile = await parseResumeText(ai, msg.resumeText, msg.label);
