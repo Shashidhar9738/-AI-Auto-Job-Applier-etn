@@ -6,6 +6,7 @@ import { toDataUrl } from '@/lib/utils';
 import { DEFAULT_MODELS } from '@/lib/constants';
 import { testAiConnection } from '@/lib/ai/test-connection';
 import { ModelPicker } from '@/components/ModelPicker';
+import { CustomPresets } from '@/components/CustomPresets';
 import type { AiProvider, AiSettings, ResumeProfile } from '@/lib/types';
 
 type Step = 0 | 1 | 2 | 3 | 4;
@@ -150,6 +151,10 @@ export function Onboarding() {
           </select>
           {provider === 'custom' && (
             <>
+              <label className="label">Quick presets</label>
+              <div className="mb-3">
+                <CustomPresets onPick={(b, m) => { setBaseUrl(b); setModel(m); }} />
+              </div>
               <label className="label">Base URL</label>
               <input className="input mb-3" value={baseUrl} placeholder="https://api.deepseek.com" onChange={(e) => setBaseUrl(e.target.value)} />
             </>

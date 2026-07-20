@@ -87,6 +87,17 @@ export const MODEL_OPTIONS: Record<string, { value: string; label: string }[]> =
   custom: [],
 };
 
+/** One-tap presets for the Custom (OpenAI-compatible) provider: fill the base
+ *  URL + a sensible model. The user still supplies their own API key. */
+export const CUSTOM_PRESETS: { label: string; baseUrl: string; model: string; free?: boolean }[] = [
+  { label: 'Groq', baseUrl: 'https://api.groq.com/openai/v1', model: 'llama-3.3-70b-versatile', free: true },
+  { label: 'Gemini', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-2.0-flash', free: true },
+  { label: 'Cerebras', baseUrl: 'https://api.cerebras.ai/v1', model: 'llama-3.3-70b', free: true },
+  { label: 'DeepSeek', baseUrl: 'https://api.deepseek.com', model: 'deepseek-chat' },
+  { label: 'Together', baseUrl: 'https://api.together.xyz/v1', model: 'meta-llama/Llama-3.3-70B-Instruct-Turbo' },
+  { label: 'Mistral', baseUrl: 'https://api.mistral.ai/v1', model: 'mistral-large-latest' },
+];
+
 export const DEFAULT_MODELS = {
   anthropic: 'claude-sonnet-5',
   openai: 'gpt-4o',

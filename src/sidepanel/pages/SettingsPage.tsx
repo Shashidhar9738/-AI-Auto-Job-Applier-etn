@@ -10,6 +10,7 @@ import {
 } from '@/lib/custom-portals';
 import { testAiConnection } from '@/lib/ai/test-connection';
 import { ModelPicker } from '@/components/ModelPicker';
+import { CustomPresets } from '@/components/CustomPresets';
 import { TagInput } from '../components/TagInput';
 
 export function SettingsPage() {
@@ -144,11 +145,16 @@ export function SettingsPage() {
           </Field>
         </div>
         {draft.ai.provider === 'custom' && (
-          <Field label="Base URL">
-            <input className="input" value={draft.ai.baseUrl ?? ''}
-              placeholder="e.g. https://api.deepseek.com"
-              onChange={(e) => patch({ ai: { ...draft.ai, baseUrl: e.target.value } })} />
-          </Field>
+          <>
+            <Field label="Quick presets">
+              <CustomPresets onPick={(baseUrl, model) => patch({ ai: { ...draft.ai, baseUrl, model } })} />
+            </Field>
+            <Field label="Base URL">
+              <input className="input" value={draft.ai.baseUrl ?? ''}
+                placeholder="e.g. https://api.deepseek.com"
+                onChange={(e) => patch({ ai: { ...draft.ai, baseUrl: e.target.value } })} />
+            </Field>
+          </>
         )}
         <Field label="API key (stored locally only)">
           <input type="password" className="input" value={draft.ai.apiKey} placeholder="sk-…"
